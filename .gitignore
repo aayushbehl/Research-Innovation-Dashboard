@@ -29,6 +29,9 @@ institution_data.csv
 amplify/team-provider-info.json
 back_end/cdk/cdk.context.json
 
+
+.env
+
 #amplify-do-not-edit-begin
 amplify/\#current-cloud-backend
 amplify/.config/local-*
@@ -50,5 +53,3 @@ amplifytools.xcconfig
 .secret-*
 **.sample
 #amplify-do-not-edit-end
-
-.env

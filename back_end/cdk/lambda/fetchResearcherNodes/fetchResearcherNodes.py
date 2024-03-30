@@ -126,8 +126,9 @@ def lambda_handler(event, context):
         if researcher[13] not in keyList:
             
             faculty_color = colorObject.get(researcher[10], "#634581")
-            
-            researcherObject = {
+            researcherObject = {}
+            if stepFunctionCall != None:
+                researcherObject = {
                 "key": researcher[13],
                 "attributes": {
                     "label": researcher[2] + " " + researcher[3],
@@ -137,8 +138,14 @@ def lambda_handler(event, context):
                     #"faculty": researcher[10],
                     "color": faculty_color,
                     "size": 0.1
-                },
-            }
+                    },
+                }
+            else:
+                # This should only happen in case of filtration of nodes
+                researcherObject = {
+                    "key": researcher[13]
+                }
+                
             researcherList.append(researcherObject)
             keyList.append(researcher[13])
 

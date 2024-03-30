@@ -50,6 +50,17 @@ export default function TheApp(props) {
     changeGraph();
   }, [currentlyAppliedFaculties, currentlyAppliedKeywordFilter])
 
+  const filterNodesAndEdges = async (nodes, edges, keyword, facultiesToFilterOn) => {
+    const filterNodes = await API.graphql({
+      query: getResearchers,
+      variables: {"facultiesToFilterOn": facultiesToFilterOn, "keyword": keyword},
+    });
+    const keys = filterNodes.data.getResearchers.map((node) => node.key);
+    nodes = nodes.filter((node) => keys.includes(node.key));
+    edges = edges.filter((edge) => keys.includes(edge.source) && keys.includes(edge.target))
+    return [nodes, edges]
+  }
+
   const getGraph = async () => {
     try {
 
@@ -64,10 +75,28 @@ export default function TheApp(props) {
         }),
       ]);*/
 
-      const [researchers, edgesResult] = await Promise.all([
+      /**
+       * 
+
+        Auth.currentSession().then(res=>{
+        let accessToken = res.getAccessToken()
+        let jwt = accessToken.getJwtToken()
+      
+        //You can print them to see the full objects
+        console.log(`myAccessToken: ${JSON.stringify(accessToken)}`)
+        console.log(`myJwt: ${jwt}`)
+        })
+       */
+      const session = await Auth.currentSession()
+      const jwt = session.getAccessToken().getJwtToken();
+
+      let [researchers, edgesResult] = await Promise.all([
         (await fetch(`${process.env.REACT_APP_CLOUDFRONT_URL}nodes.json`)).json(),
         (await fetch(`${process.env.REACT_APP_CLOUDFRONT_URL}edges.json`)).json()
       ]);
+
+      if(currentlyAppliedFaculties.length > 0 || keywordFilter.toLocaleLowerCase().length > 0)
+        [researchers, edgesResult] = await filterNodesAndEdges(researchers, edgesResult, keywordFilter.toLocaleLowerCase(), currentlyAppliedFaculties);
 
       setResearcherNodes(researchers);
       setGraphEdges(edgesResult);

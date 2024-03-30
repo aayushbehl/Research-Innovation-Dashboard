@@ -17,9 +17,10 @@ import { GrantDataStack } from "./grantdata-stack";
 import { DataFetchStack } from "./datafetch-stack";
 import { aws_stepfunctions_tasks as tasks} from 'aws-cdk-lib';
 import { AppsyncStack } from "./appsync-stack";
-import { DefinitionBody, IntegrationPattern, StateMachine, TaskInput } from "aws-cdk-lib/aws-stepfunctions";
-import { Distribution } from "aws-cdk-lib/aws-cloudfront";
+import { DefinitionBody, IntegrationPattern, JsonPath, StateMachine, TaskInput } from "aws-cdk-lib/aws-stepfunctions";
+import { AllowedMethods, Distribution, OriginRequestPolicy, ResponseHeadersPolicy } from "aws-cdk-lib/aws-cloudfront";
 import { S3Origin } from "aws-cdk-lib/aws-cloudfront-origins";
+import { AllowListReceiptFilter } from "aws-cdk-lib/aws-ses";
 
 export class GraphDataStack extends Stack {
     constructor(
@@ -206,22 +207,52 @@ export class GraphDataStack extends Stack {
       integrationPattern: IntegrationPattern.RUN_JOB
     });
 
-    const graphStateMachineDefinition = createEdgesStep
-            .next(createSimilarResearchersStep)
-            .next(fetchNodesStep)
-            .next(createXYStep);
-
-    const graphStateMachine = new StateMachine(this, 'graphStateMachine', {
-      definitionBody: DefinitionBody.fromChainable(graphStateMachineDefinition),
-      stateMachineName: 'expertiseDashboard-graphStepFunction'
-    });
-
     // Cloudfront
 
     const cloudFrontDistribution = new Distribution(this, 'cloudfrontGraph', {
       defaultBehavior: {
-        origin: new S3Origin(graphBucket)
+        origin: new S3Origin(graphBucket),
+        allowedMethods: AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
+        originRequestPolicy: OriginRequestPolicy.CORS_S3_ORIGIN,
+        responseHeadersPolicy: new ResponseHeadersPolicy(this, 'customCORS', {
+          responseHeadersPolicyName: 'CustomCORSPolicy',
+          corsBehavior: {
+            accessControlAllowCredentials: false,
+            accessControlAllowHeaders: ['Content-Type', 'Authorization'],
+            accessControlAllowMethods: ['GET', 'POST', 'OPTIONS'],
+            accessControlAllowOrigins: ['*'],
+            originOverride: true
+          }
+        })
       }
+    });
+
+    const invalidationStep = new tasks.CallAwsService(this, 'invalidateCloudfront', {
+      service: 'cloudfront',
+      action: 'createInvalidation',
+      iamResources: ['*'],
+      iamAction: 'cloudfront:*',
+      parameters: {
+        'DistributionId': cloudFrontDistribution.distributionId,
+        'InvalidationBatch': {
+          'CallerReference': JsonPath.stringAt("$$.Execution.Id"),
+          'Paths': {
+            'Items': ['/*'],
+            'Quantity': 1
+          }
+        }
+      }
+    });
+
+    const graphStateMachineDefinition = createEdgesStep
+            .next(createSimilarResearchersStep)
+            .next(fetchNodesStep)
+            .next(createXYStep)
+            .next(invalidationStep);
+
+    const graphStateMachine = new StateMachine(this, 'graphStateMachine', {
+      definitionBody: DefinitionBody.fromChainable(graphStateMachineDefinition),
+      stateMachineName: 'expertiseDashboard-graphStepFunction'
     });
   }
 }
