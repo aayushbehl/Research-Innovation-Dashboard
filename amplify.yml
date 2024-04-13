@@ -15,9 +15,6 @@ frontend:
     build:
       commands:
         - npm run build
-    postBuild:
-      commands:
-        - ./app_id_to_ssm.sh
 
   artifacts:
     # IMPORTANT - Please verify your build output directory
