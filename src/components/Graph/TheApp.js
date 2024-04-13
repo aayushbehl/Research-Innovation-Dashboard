@@ -63,36 +63,26 @@ export default function TheApp(props) {
 
   const getGraph = async () => {
     try {
-
-      /*const [researchers, edgesResult] = await Promise.all([
-        API.graphql({
-          query: getResearchers,
-          variables: {"facultiesToFilterOn": currentlyAppliedFaculties, "keyword": keywordFilter.toLowerCase()},
-        }),
-        API.graphql({
-          query: getEdges,
-          variables: {"facultiesToFilterOn": currentlyAppliedFaculties, "keyword": keywordFilter.toLowerCase()},
-        }),
-      ]);*/
-
-      /**
-       * 
-
-        Auth.currentSession().then(res=>{
-        let accessToken = res.getAccessToken()
-        let jwt = accessToken.getJwtToken()
-      
-        //You can print them to see the full objects
-        console.log(`myAccessToken: ${JSON.stringify(accessToken)}`)
-        console.log(`myJwt: ${jwt}`)
-        })
-       */
+      var time = Date.now();
       const session = await Auth.currentSession()
       const jwt = session.getAccessToken().getJwtToken();
-
+      const clientId = session.getAccessToken().payload.client_id
+      //console.log(clientId)
+      //console.log(jwt)
       let [researchers, edgesResult] = await Promise.all([
-        (await fetch(`${process.env.REACT_APP_CLOUDFRONT_URL}nodes.json`)).json(),
-        (await fetch(`${process.env.REACT_APP_CLOUDFRONT_URL}edges.json`)).json()
+        (await fetch(`${process.env.REACT_APP_CLOUDFRONT_URL}nodes.json`, {
+          mode: 'cors',
+          headers: {
+            "clientid": clientId,
+            "Authorization": jwt
+          }
+        })).json(),
+        (await fetch(`${process.env.REACT_APP_CLOUDFRONT_URL}edges.json`, {
+          headers: {
+            "clientid": clientId,
+            "Authorization": jwt
+          }
+        })).json()
       ]);
 
       if(currentlyAppliedFaculties.length > 0 || keywordFilter.toLocaleLowerCase().length > 0)
@@ -102,6 +92,7 @@ export default function TheApp(props) {
       setGraphEdges(edgesResult);
       setGraphProgress(20);
       setAutoCompleteOptions(Object.values(researchers).map(formatOptions));
+      console.log(`Took ${Date.now() - time} ms`);
     } catch (error) {
       console.error("Error fetching data:", error);
     }

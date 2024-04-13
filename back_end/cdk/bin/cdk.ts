@@ -13,6 +13,7 @@ import { GrantDataStack } from '../lib/grantdata-stack';
 import { PatentDataStack } from '../lib/patentdata-stack';
 import { UpdatePublicationStack } from '../lib/updatepublication-stack';
 import { GraphDataStack } from '../lib/graphdata-stack';
+import { CloudfrontAuthStack } from '../lib/cloudfrontauth-stack';
 
 
 const app = new cdk.App();
@@ -54,6 +55,10 @@ updatePublicationStack.addDependency(grantDataStack)
 const appsyncStack = new AppsyncStack(app, 'AppsyncStack', openSearchStack, vpcStack, databaseStack, dataFetchStack,
     {env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: process.env.CDK_DEFAULT_REGION }});
 
-const graphDataStack = new GraphDataStack(app, 'GraphDataStack', grantDataStack, vpcStack, dataFetchStack.dataFetchRole, appsyncStack,
-    {env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: process.env.CDK_DEFAULT_REGION }});
+// This stack needs to be deployed to us-east-1 (for Lambda@Edge) 
+const cloudfrontAuthStack = new CloudfrontAuthStack(app, 'CloudfrontAuthStack', 
+    {env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: 'us-east-1'}, crossRegionReferences: true});
+
+const graphDataStack = new GraphDataStack(app, 'GraphDataStack', grantDataStack, vpcStack, dataFetchStack.dataFetchRole, appsyncStack, cloudfrontAuthStack,
+    {env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: process.env.CDK_DEFAULT_REGION }, crossRegionReferences: true});
 

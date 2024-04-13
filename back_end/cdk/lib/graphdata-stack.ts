@@ -1,26 +1,22 @@
 import * as cdk from "aws-cdk-lib";
 import { RemovalPolicy, Stack, StackProps } from "aws-cdk-lib";
 import { Construct } from "constructs";
-import * as ec2 from "aws-cdk-lib/aws-ec2";
 import { VpcStack } from "./vpc-stack";
 import * as s3 from "aws-cdk-lib/aws-s3";
 import * as s3deploy from "aws-cdk-lib/aws-s3-deployment";
-import * as s3n from "aws-cdk-lib/aws-s3-notifications";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as glue from "aws-cdk-lib/aws-glue";
-import * as sm from "aws-cdk-lib/aws-secretsmanager";
 import * as lambda from "aws-cdk-lib/aws-lambda";
-import { triggers } from "aws-cdk-lib";
-import { DatabaseStack } from "./database-stack";
-import { Effect, ServicePrincipal } from "aws-cdk-lib/aws-iam";
+import { Effect } from "aws-cdk-lib/aws-iam";
 import { GrantDataStack } from "./grantdata-stack";
-import { DataFetchStack } from "./datafetch-stack";
 import { aws_stepfunctions_tasks as tasks} from 'aws-cdk-lib';
 import { AppsyncStack } from "./appsync-stack";
+import { CloudfrontAuthStack } from '../lib/cloudfrontauth-stack';
 import { DefinitionBody, IntegrationPattern, JsonPath, StateMachine, TaskInput } from "aws-cdk-lib/aws-stepfunctions";
-import { AllowedMethods, Distribution, OriginRequestPolicy, ResponseHeadersPolicy } from "aws-cdk-lib/aws-cloudfront";
+import { AllowedMethods, CacheHeaderBehavior, CachePolicy, Distribution, OriginRequestPolicy, ResponseHeadersPolicy } from "aws-cdk-lib/aws-cloudfront";
 import { S3Origin } from "aws-cdk-lib/aws-cloudfront-origins";
-import { AllowListReceiptFilter } from "aws-cdk-lib/aws-ses";
+import { aws_cloudfront as cloudfront } from 'aws-cdk-lib';
+
 
 export class GraphDataStack extends Stack {
     constructor(
@@ -30,6 +26,7 @@ export class GraphDataStack extends Stack {
     vpcStack: VpcStack,
     dataFetchRole: iam.Role,
     appSyncStack: AppsyncStack,
+    cloudfrontAuthStack: CloudfrontAuthStack,
     props?: StackProps
   ) {
     super(scope, id, props);
@@ -208,22 +205,34 @@ export class GraphDataStack extends Stack {
     });
 
     // Cloudfront
-
     const cloudFrontDistribution = new Distribution(this, 'cloudfrontGraph', {
       defaultBehavior: {
         origin: new S3Origin(graphBucket),
         allowedMethods: AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
         originRequestPolicy: OriginRequestPolicy.CORS_S3_ORIGIN,
+        cachePolicy: new CachePolicy(this, 'customCachePolicy', {
+          cachePolicyName: 'CustomCachePolicy',
+          headerBehavior: CacheHeaderBehavior.allowList('Authorization', 'clientId'),
+          enableAcceptEncodingGzip: true,
+          enableAcceptEncodingBrotli: true,
+          minTtl: cdk.Duration.seconds(1),
+          maxTtl: cdk.Duration.seconds(31536000),
+          defaultTtl: cdk.Duration.seconds(86400)
+        }),
         responseHeadersPolicy: new ResponseHeadersPolicy(this, 'customCORS', {
           responseHeadersPolicyName: 'CustomCORSPolicy',
           corsBehavior: {
             accessControlAllowCredentials: false,
-            accessControlAllowHeaders: ['Content-Type', 'Authorization'],
+            accessControlAllowHeaders: ['Content-Type', 'authorization', 'clientid'],
             accessControlAllowMethods: ['GET', 'POST', 'OPTIONS'],
             accessControlAllowOrigins: ['*'],
             originOverride: true
           }
-        })
+        }),
+        edgeLambdas: [{
+          eventType: cloudfront.LambdaEdgeEventType.VIEWER_REQUEST,
+          functionVersion: cloudfrontAuthStack.cloudfrontAuth.currentVersion,
+        }]
       }
     });
 
