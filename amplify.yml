@@ -6,6 +6,8 @@ backend:
         - npm install -g @aws-amplify/cli
         - "# Execute Amplify CLI with the helper script"
         - amplifyPush --simple
+        - aws ssm put-parameter --name "/amplify/userPool" --value "$AMPLIFY_USERPOOL_ID" --type "String" --overwrite
+
 frontend:
   phases:
     preBuild:
@@ -15,9 +17,6 @@ frontend:
     build:
       commands:
         - npm run build
-    postBuild:
-      commands:
-        - aws ssm put-parameter --name "/amplify/userPool" --value "$AMPLIFY_USERPOOL_ID" --type "String" --overwrite
 
   artifacts:
     # IMPORTANT - Please verify your build output directory

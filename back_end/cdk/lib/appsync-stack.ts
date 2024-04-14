@@ -20,7 +20,7 @@ export class AppsyncStack extends Stack {
 
     // Get user pool id from parameter store
     this.userPoolId = ssm.StringParameter.fromStringParameterAttributes(this, 'userPoolId', {
-      parameterName: 'amplify/userPoolId'
+      parameterName: '/amplify/userPool'
     }).stringValue;
 
     // Get the API ID from paramter Store
