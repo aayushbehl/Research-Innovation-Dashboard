@@ -5,7 +5,7 @@ backend:
       commands:
         - npm install -g @aws-amplify/cli
         - amplifyPush --simple
-        - ls
+        - amplify status auth
 
 frontend:
   phases:
