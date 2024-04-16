@@ -5,7 +5,8 @@ backend:
       commands:
         - npm install -g @aws-amplify/cli
         - amplifyPush --simple
-        - amplify status auth
+        - cd src
+        - cat aws-exports.js
 
 frontend:
   phases:
