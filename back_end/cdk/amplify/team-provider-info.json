@@ -1,0 +1,15 @@
+{
+  "livvyy": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-researchinnovationda-livvyy-0ae1a-authRole",
+      "UnauthRoleArn": "arn:aws:iam::657341422592:role/amplify-researchinnovationda-livvyy-0ae1a-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::657341422592:role/amplify-researchinnovationda-livvyy-0ae1a-authRole",
+      "Region": "ca-central-1",
+      "DeploymentBucketName": "amplify-researchinnovationda-livvyy-0ae1a-deployment",
+      "UnauthRoleName": "amplify-researchinnovationda-livvyy-0ae1a-unauthRole",
+      "StackName": "amplify-researchinnovationda-livvyy-0ae1a",
+      "StackId": "arn:aws:cloudformation:ca-central-1:657341422592:stack/amplify-researchinnovationda-livvyy-0ae1a/e85287d0-0265-11ef-a694-0222faaa4f0d",
+      "AmplifyAppId": "d2q0popnf8k55g"
+    }
+  }
+}

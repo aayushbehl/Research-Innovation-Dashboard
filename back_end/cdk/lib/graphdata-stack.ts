@@ -212,7 +212,7 @@ export class GraphDataStack extends Stack {
         originRequestPolicy: OriginRequestPolicy.CORS_S3_ORIGIN,
         cachePolicy: new CachePolicy(this, 'customCachePolicy', {
           cachePolicyName: 'CustomCachePolicy',
-          headerBehavior: CacheHeaderBehavior.allowList('Authorization', 'clientId'),
+          headerBehavior: CacheHeaderBehavior.allowList('Authorization', 'clientId', 'region'),
           enableAcceptEncodingGzip: true,
           enableAcceptEncodingBrotli: true,
           minTtl: cdk.Duration.seconds(1),
@@ -223,7 +223,7 @@ export class GraphDataStack extends Stack {
           responseHeadersPolicyName: 'CustomCORSPolicy',
           corsBehavior: {
             accessControlAllowCredentials: false,
-            accessControlAllowHeaders: ['Content-Type', 'authorization', 'clientid'],
+            accessControlAllowHeaders: ['Content-Type', 'authorization', 'clientid', 'region'],
             accessControlAllowMethods: ['GET', 'POST', 'OPTIONS'],
             accessControlAllowOrigins: ['*'],
             originOverride: true

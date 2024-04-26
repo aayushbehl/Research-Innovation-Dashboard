@@ -1,4 +1,6 @@
 const { CognitoJwtVerifier } = require("aws-jwt-verify");
+const { SSMClient, GetParameterCommand } = require("@aws-sdk/client-ssm");
+
 
 // Use this request to answer to the OPTIONS preflight call
 const preflightCall = {
@@ -30,13 +32,22 @@ exports.handler = async (event, context, callback) => {
           return;
      }
 
-     if (headers.authorization == null || headers.clientid == null) {
+     if (headers.authorization == null || headers.clientid == null || headers.region == null) {
         request.uri = '/'
         callback(null, request)
      }
+
+     const client = new SSMClient({region: headers.region[0].value});
+     const input = { // GetParameterRequest
+          Name: "/amplify/userPool",
+          WithDecryption: true
+     };
+
+     const command = new GetParameterCommand(input)
+     const userPool = await client.send(command)
           
      const verifier = CognitoJwtVerifier.create({
-          userPoolId: process.env.USER_POOL_ID,
+          userPoolId: userPool.Parameter.Value,
           tokenUse: "access",
           clientId: headers.clientid[0].value
      });

@@ -3,7 +3,7 @@ import { Effect, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws
 import * as lambda from "aws-cdk-lib/aws-lambda";
 export class CloudfrontAuthStack extends cdk.Stack {
     public readonly cloudfrontAuth: lambda.Function;
-    constructor(scope: cdk.App, id: string, userPoolId: string, props?: cdk.StackProps) {
+    constructor(scope: cdk.App, id: string, props?: cdk.StackProps) {
         super(scope, id, props);
 
         const cognitoRole = new Role(this, 'cognitoRole', {
@@ -29,6 +29,14 @@ export class CloudfrontAuthStack extends cdk.Stack {
             ],
             resources: ["arn:aws:logs:*:*:*"]
         }))
+
+        cognitoRole.addToPolicy(new PolicyStatement({
+            effect: Effect.ALLOW,
+            actions: [
+                "ssm:GetParameter"
+            ],
+            resources: ["arn:aws:ssm:*:*:*"]
+        }))
         
         // Lambda@Edge Authorization Function
         this.cloudfrontAuth = new lambda.Function(this, 'expertiseDashboard-cloudfrontAuth', {
@@ -39,9 +47,6 @@ export class CloudfrontAuthStack extends cdk.Stack {
             role: cognitoRole,
             timeout: cdk.Duration.seconds(5),
             memorySize: 128,
-            environment: {
-                USER_POOL_ID: userPoolId
-            }
         });
     }
 }

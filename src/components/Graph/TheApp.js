@@ -65,22 +65,24 @@ export default function TheApp(props) {
     try {
       var time = Date.now();
       const session = await Auth.currentSession()
+      const region = session.getIdToken().payload.iss.split('.')[1];
       const jwt = session.getAccessToken().getJwtToken();
       const clientId = session.getAccessToken().payload.client_id
-      //console.log(clientId)
-      //console.log(jwt)
+      
       let [researchers, edgesResult] = await Promise.all([
         (await fetch(`${process.env.REACT_APP_CLOUDFRONT_URL}nodes.json`, {
           mode: 'cors',
           headers: {
             "clientid": clientId,
-            "Authorization": jwt
+            "Authorization": jwt,
+            "region": region
           }
         })).json(),
         (await fetch(`${process.env.REACT_APP_CLOUDFRONT_URL}edges.json`, {
           headers: {
             "clientid": clientId,
-            "Authorization": jwt
+            "Authorization": jwt,
+            "region": region
           }
         })).json()
       ]);

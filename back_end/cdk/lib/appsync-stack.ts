@@ -14,14 +14,8 @@ import { DataFetchStack } from './datafetch-stack';
 
 export class AppsyncStack extends Stack {
   public readonly fetchResearcherNodes : lambda.Function;
-  public readonly userPoolId : string;
   constructor(scope: Construct, id: string, opensearchStack: OpensearchStack, vpcStack: VpcStack, databaseStack: DatabaseStack, dataFetchStack: DataFetchStack, props?: StackProps) {
     super(scope, id, props);
-
-    // Get user pool id from parameter store
-    this.userPoolId = ssm.StringParameter.fromStringParameterAttributes(this, 'userPoolId', {
-      parameterName: '/amplify/userPool'
-    }).stringValue;
 
     // Get the API ID from paramter Store
     // During Amplify Deployment the APIID is stored in parameter store
