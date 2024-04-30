@@ -1,10 +1,10 @@
 {
   "version": "1",
   "cognitoConfig": {
-    "identityPoolName": "researchinnovationda197a129c_identitypool_197a129c",
+    "identityPoolName": "vpriinnovationdashbo197a129c_identitypool_197a129c",
     "allowUnauthenticatedIdentities": false,
     "resourceNameTruncated": "vpriin197a129c",
-    "userPoolName": "researchinnovationda197a129c_userpool_197a129c",
+    "userPoolName": "vpriinnovationdashbo197a129c_userpool_197a129c",
     "autoVerifiedAttributes": [
       "email"
     ],
@@ -34,7 +34,7 @@
     "userpoolClientLambdaRole": "vpriin197a129c_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
     "sharedId": "197a129c",
-    "resourceName": "researchinnovationda197a129c",
+    "resourceName": "vpriinnovationdashbo197a129c",
     "authSelections": "identityPoolAndUserPool",
     "useDefault": "default",
     "usernameAttributes": [

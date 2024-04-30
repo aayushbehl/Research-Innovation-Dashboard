@@ -18,18 +18,18 @@ export class cdkStack extends cdk.Stack {
       amplifyResourceProps.category, 
       amplifyResourceProps.resourceName, 
       [
-        {category: 'api', resourceName: "researchinnovationda"},
+        {category: 'api', resourceName: "vpriinnovationdashbo"},
       ]
     );
-    const GraphQLAPIIdOutput = cdk.Fn.ref(dependencies.api.researchinnovationda.GraphQLAPIIdOutput)
-    const GraphQLAPIEndpointOutput = cdk.Fn.ref(dependencies.api.researchinnovationda.GraphQLAPIEndpointOutput)
+    const GraphQLAPIIdOutput = cdk.Fn.ref(dependencies.api.vpriinnovationdashbo.GraphQLAPIIdOutput)
+    const GraphQLAPIEndpointOutput = cdk.Fn.ref(dependencies.api.vpriinnovationdashbo.GraphQLAPIEndpointOutput)
     /* AWS CDK code goes here - learn more: https://docs.aws.amazon.com/cdk/latest/guide/home.html */
     new ssm.StringParameter(this, 'ParameterStoreGraphQLAPIIdOutput', {
-      parameterName: 'ResearchInnovationGraphQLAPIIdOutput',
+      parameterName: 'VPRIGraphQLAPIIdOutput',
       stringValue: GraphQLAPIIdOutput,
     });
     new ssm.StringParameter(this, 'ParameterStoreGraphQLAPIEndpointOutput', {
-      parameterName: 'ResearchInnovationGraphQLAPIEndpointOutput',
+      parameterName: 'VPRIGraphQLAPIEndpointOutput',
       stringValue: GraphQLAPIEndpointOutput,
     });
   }

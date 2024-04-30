@@ -1,10 +1,10 @@
 {
-  "AppSyncApiName": "researchinnovationda",
+  "AppSyncApiName": "vpriinnovationdashbo",
   "DynamoDBBillingMode": "PAY_PER_REQUEST",
   "DynamoDBEnableServerSideEncryption": false,
   "AuthCognitoUserPoolId": {
     "Fn::GetAtt": [
-      "authresearchinnovationda197a129c",
+      "authvpriinnovationdashbo197a129c",
       "Outputs.UserPoolId"
     ]
   }

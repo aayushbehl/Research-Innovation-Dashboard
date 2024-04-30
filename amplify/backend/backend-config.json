@@ -1,13 +1,13 @@
 {
   "api": {
-    "researchinnovationda": {
+    "vpriinnovationdashbo": {
       "dependsOn": [
         {
           "attributes": [
             "UserPoolId"
           ],
           "category": "auth",
-          "resourceName": "researchinnovationda197a129c"
+          "resourceName": "vpriinnovationdashbo197a129c"
         }
       ],
       "output": {
@@ -25,7 +25,7 @@
           "defaultAuthentication": {
             "authenticationType": "AMAZON_COGNITO_USER_POOLS",
             "userPoolConfig": {
-              "userPoolId": "authresearchinnovationda197a129c"
+              "userPoolId": "authvpriinnovationdashbo197a129c"
             }
           }
         }
@@ -45,13 +45,13 @@
             "IdentityPoolId"
           ],
           "category": "auth",
-          "resourceName": "researchinnovationda197a129c"
+          "resourceName": "vpriinnovationdashbo197a129c"
         }
       ],
       "providerPlugin": "awscloudformation",
       "service": "Cognito-UserPool-Groups"
     },
-    "researchinnovationda197a129c": {
+    "vpriinnovationdashbo197a129c": {
       "customAuth": false,
       "dependsOn": [],
       "frontendAuthConfig": {
@@ -88,7 +88,7 @@
             "GraphQLAPIEndpointOutput"
           ],
           "category": "api",
-          "resourceName": "researchinnovationda"
+          "resourceName": "vpriinnovationdashbo"
         }
       ],
       "providerPlugin": "awscloudformation",
