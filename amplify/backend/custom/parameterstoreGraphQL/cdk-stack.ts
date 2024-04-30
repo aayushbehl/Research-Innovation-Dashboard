@@ -1,10 +1,11 @@
-import * as cdk from '@aws-cdk/core';
+import { Construct } from 'constructs';
+import * as cdk from 'aws-cdk-lib/core'
 import * as AmplifyHelpers from '@aws-amplify/cli-extensibility-helper';
-import * as ssm from '@aws-cdk/aws-ssm';
+import * as ssm from 'aws-cdk-lib/aws-ssm';
 import { AmplifyDependentResourcesAttributes } from '../../types/amplify-dependent-resources-ref';
 
 export class cdkStack extends cdk.Stack {
-  constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps, amplifyResourceProps?: AmplifyHelpers.AmplifyResourceProps) {
+  constructor(scope: Construct, id: string, props?: cdk.StackProps, amplifyResourceProps?: AmplifyHelpers.AmplifyResourceProps) {
     super(scope, id, props);
     /* Do not remove - Amplify CLI automatically injects the current deployment environment in this input parameter */
     new cdk.CfnParameter(this, 'env', {
@@ -18,18 +19,18 @@ export class cdkStack extends cdk.Stack {
       amplifyResourceProps.category, 
       amplifyResourceProps.resourceName, 
       [
-        {category: 'api', resourceName: "vpriinnovationdashbo"},
+        {category: 'api', resourceName: "researchinnovationda"},
       ]
     );
-    const GraphQLAPIIdOutput = cdk.Fn.ref(dependencies.api.vpriinnovationdashbo.GraphQLAPIIdOutput)
-    const GraphQLAPIEndpointOutput = cdk.Fn.ref(dependencies.api.vpriinnovationdashbo.GraphQLAPIEndpointOutput)
+    const GraphQLAPIIdOutput = cdk.Fn.ref(dependencies.api.researchinnovationda.GraphQLAPIIdOutput)
+    const GraphQLAPIEndpointOutput = cdk.Fn.ref(dependencies.api.researchinnovationda.GraphQLAPIEndpointOutput)
     /* AWS CDK code goes here - learn more: https://docs.aws.amazon.com/cdk/latest/guide/home.html */
     new ssm.StringParameter(this, 'ParameterStoreGraphQLAPIIdOutput', {
-      parameterName: 'VPRIGraphQLAPIIdOutput',
+      parameterName: 'ResearchInnovationGraphQLAPIIdOutput',
       stringValue: GraphQLAPIIdOutput,
     });
     new ssm.StringParameter(this, 'ParameterStoreGraphQLAPIEndpointOutput', {
-      parameterName: 'VPRIGraphQLAPIEndpointOutput',
+      parameterName: 'ResearchInnovationGraphQLAPIEndpointOutput',
       stringValue: GraphQLAPIEndpointOutput,
     });
   }

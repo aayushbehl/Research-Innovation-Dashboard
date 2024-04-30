@@ -1,31 +1,22 @@
 {
   "api": {
-    "vpriinnovationdashbo": {
+    "researchinnovationda": {
       "dependsOn": [
         {
           "attributes": [
             "UserPoolId"
           ],
           "category": "auth",
-          "resourceName": "vpriinnovationdashbo197a129c"
+          "resourceName": "researchinnovationda2e79fbee"
         }
       ],
       "output": {
         "authConfig": {
-          "additionalAuthenticationProviders": [
-            {
-              "apiKeyConfig": {
-                "apiKeyExpirationDate": "2022-12-14T19:41:33.230Z",
-                "apiKeyExpirationDays": 7,
-                "description": ""
-              },
-              "authenticationType": "API_KEY"
-            }
-          ],
+          "additionalAuthenticationProviders": [],
           "defaultAuthentication": {
             "authenticationType": "AMAZON_COGNITO_USER_POOLS",
             "userPoolConfig": {
-              "userPoolId": "authvpriinnovationdashbo197a129c"
+              "userPoolId": "authresearchinnovationda2e79fbee"
             }
           }
         }
@@ -35,23 +26,7 @@
     }
   },
   "auth": {
-    "userPoolGroups": {
-      "dependsOn": [
-        {
-          "attributes": [
-            "UserPoolId",
-            "AppClientIDWeb",
-            "AppClientID",
-            "IdentityPoolId"
-          ],
-          "category": "auth",
-          "resourceName": "vpriinnovationdashbo197a129c"
-        }
-      ],
-      "providerPlugin": "awscloudformation",
-      "service": "Cognito-UserPool-Groups"
-    },
-    "vpriinnovationdashbo197a129c": {
+    "researchinnovationda2e79fbee": {
       "customAuth": false,
       "dependsOn": [],
       "frontendAuthConfig": {
@@ -76,21 +51,26 @@
       },
       "providerPlugin": "awscloudformation",
       "service": "Cognito"
+    },
+    "userPoolGroups": {
+      "dependsOn": [
+        {
+          "attributes": [
+            "UserPoolId",
+            "AppClientIDWeb",
+            "AppClientID",
+            "IdentityPoolId"
+          ],
+          "category": "auth",
+          "resourceName": "researchinnovationda2e79fbee"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Cognito-UserPool-Groups"
     }
   },
   "custom": {
     "parameterstoreGraphQL": {
-      "dependsOn": [
-        {
-          "attributes": [
-            "GraphQLAPIKeyOutput",
-            "GraphQLAPIIdOutput",
-            "GraphQLAPIEndpointOutput"
-          ],
-          "category": "api",
-          "resourceName": "vpriinnovationdashbo"
-        }
-      ],
       "providerPlugin": "awscloudformation",
       "service": "customCDK"
     }

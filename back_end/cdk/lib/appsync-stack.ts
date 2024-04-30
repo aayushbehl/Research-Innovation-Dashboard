@@ -19,8 +19,8 @@ export class AppsyncStack extends Stack {
 
     // Get the API ID from paramter Store
     // During Amplify Deployment the APIID is stored in parameter store
-    const APIID = ssm.StringParameter.fromStringParameterAttributes(this, 'VPRIGraphQLAPIIdOutput', {
-      parameterName: 'VPRIGraphQLAPIIdOutput',
+    const APIID = ssm.StringParameter.fromStringParameterAttributes(this, 'ResearchInnovationGraphQLAPIIdOutput', {
+      parameterName: 'ResearchInnovationGraphQLAPIIdOutput',
     }).stringValue;
 
     //Create a role for lambda to access the postgresql database
