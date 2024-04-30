@@ -1,6 +1,6 @@
 export type AmplifyDependentResourcesAttributes = {
   "api": {
-    "vpriinnovationdashbo": {
+    "researchinnovationda": {
       "GraphQLAPIEndpointOutput": "string",
       "GraphQLAPIIdOutput": "string",
       "GraphQLAPIKeyOutput": "string"
@@ -10,7 +10,7 @@ export type AmplifyDependentResourcesAttributes = {
     "userPoolGroups": {
       "AdminsGroupRole": "string"
     },
-    "vpriinnovationdashbo197a129c": {
+    "researchinnovationda197a129c": {
       "AppClientID": "string",
       "AppClientIDWeb": "string",
       "IdentityPoolId": "string",

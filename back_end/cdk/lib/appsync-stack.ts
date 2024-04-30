@@ -19,8 +19,8 @@ export class AppsyncStack extends Stack {
 
     // Get the API ID from paramter Store
     // During Amplify Deployment the APIID is stored in parameter store
-    const APIID = ssm.StringParameter.fromStringParameterAttributes(this, 'VPRIGraphQLAPIIdOutput', {
-      parameterName: 'VPRIGraphQLAPIIdOutput',
+    const APIID = ssm.StringParameter.fromStringParameterAttributes(this, 'ResearchInnovationGraphQLAPIIdOutput', {
+      parameterName: 'ResearchInnovationGraphQLAPIIdOutput',
     }).stringValue;
 
     //Create a role for lambda to access the postgresql database
@@ -489,8 +489,224 @@ export class AppsyncStack extends Stack {
         text: String
         value: Int
       }
+
+      input CreateTodoInput {
+        id: ID
+        name: String!
+        description: String
+      }
+      
+      input DeleteTodoInput {
+        id: ID!
+      }
+      
+      enum ModelAttributeTypes {
+        binary
+        binarySet
+        bool
+        list
+        map
+        number
+        numberSet
+        string
+        stringSet
+        _null
+      }
+      
+      input ModelBooleanInput {
+        ne: Boolean
+        eq: Boolean
+        attributeExists: Boolean
+        attributeType: ModelAttributeTypes
+      }
+      
+      input ModelFloatInput {
+        ne: Float
+        eq: Float
+        le: Float
+        lt: Float
+        ge: Float
+        gt: Float
+        between: [Float]
+        attributeExists: Boolean
+        attributeType: ModelAttributeTypes
+      }
+      
+      input ModelIDInput {
+        ne: ID
+        eq: ID
+        le: ID
+        lt: ID
+        ge: ID
+        gt: ID
+        contains: ID
+        notContains: ID
+        between: [ID]
+        beginsWith: ID
+        attributeExists: Boolean
+        attributeType: ModelAttributeTypes
+        size: ModelSizeInput
+      }
+      
+      input ModelIntInput {
+        ne: Int
+        eq: Int
+        le: Int
+        lt: Int
+        ge: Int
+        gt: Int
+        between: [Int]
+        attributeExists: Boolean
+        attributeType: ModelAttributeTypes
+      }
+      
+      input ModelSizeInput {
+        ne: Int
+        eq: Int
+        le: Int
+        lt: Int
+        ge: Int
+        gt: Int
+        between: [Int]
+      }
+      
+      enum ModelSortDirection {
+        ASC
+        DESC
+      }
+      
+      input ModelStringInput {
+        ne: String
+        eq: String
+        le: String
+        lt: String
+        ge: String
+        gt: String
+        contains: String
+        notContains: String
+        between: [String]
+        beginsWith: String
+        attributeExists: Boolean
+        attributeType: ModelAttributeTypes
+        size: ModelSizeInput
+      }
+      
+      input ModelSubscriptionBooleanInput {
+        ne: Boolean
+        eq: Boolean
+      }
+      
+      input ModelSubscriptionFloatInput {
+        ne: Float
+        eq: Float
+        le: Float
+        lt: Float
+        ge: Float
+        gt: Float
+        between: [Float]
+        in: [Float]
+        notIn: [Float]
+      }
+      
+      input ModelSubscriptionIDInput {
+        ne: ID
+        eq: ID
+        le: ID
+        lt: ID
+        ge: ID
+        gt: ID
+        contains: ID
+        notContains: ID
+        between: [ID]
+        beginsWith: ID
+        in: [ID]
+        notIn: [ID]
+      }
+      
+      input ModelSubscriptionIntInput {
+        ne: Int
+        eq: Int
+        le: Int
+        lt: Int
+        ge: Int
+        gt: Int
+        between: [Int]
+        in: [Int]
+        notIn: [Int]
+      }
+      
+      input ModelSubscriptionStringInput {
+        ne: String
+        eq: String
+        le: String
+        lt: String
+        ge: String
+        gt: String
+        contains: String
+        notContains: String
+        between: [String]
+        beginsWith: String
+        in: [String]
+        notIn: [String]
+      }
+      
+      input ModelSubscriptionTodoFilterInput {
+        id: ModelSubscriptionIDInput
+        name: ModelSubscriptionStringInput
+        description: ModelSubscriptionStringInput
+        createdAt: ModelSubscriptionStringInput
+        updatedAt: ModelSubscriptionStringInput
+        and: [ModelSubscriptionTodoFilterInput]
+        or: [ModelSubscriptionTodoFilterInput]
+      }
+      
+      input ModelTodoConditionInput {
+        name: ModelStringInput
+        description: ModelStringInput
+        and: [ModelTodoConditionInput]
+        or: [ModelTodoConditionInput]
+        not: ModelTodoConditionInput
+        createdAt: ModelStringInput
+        updatedAt: ModelStringInput
+      }
+      
+      type ModelTodoConnection @aws_api_key {
+        items: [Todo]!
+        nextToken: String
+      }
+      
+      input ModelTodoFilterInput {
+        id: ModelIDInput
+        name: ModelStringInput
+        description: ModelStringInput
+        createdAt: ModelStringInput
+        updatedAt: ModelStringInput
+        and: [ModelTodoFilterInput]
+        or: [ModelTodoFilterInput]
+        not: ModelTodoFilterInput
+      }
+      
+      type Todo @aws_api_key {
+        id: ID!
+        name: String!
+        description: String
+        createdAt: AWSDateTime!
+        updatedAt: AWSDateTime!
+      }
+      
+      input UpdateTodoInput {
+        id: ID!
+        name: String
+        description: String
+      }
       
       type Mutation {
+        createTodo(input: CreateTodoInput!, condition: ModelTodoConditionInput): Todo
+		      @aws_api_key
+	      updateTodo(input: UpdateTodoInput!, condition: ModelTodoConditionInput): Todo
+		      @aws_api_key
+	      deleteTodo(input: DeleteTodoInput!, condition: ModelTodoConditionInput): Todo
+		      @aws_api_key
         putPub(
           authors: [String!],
           id: ID!,
@@ -501,6 +717,10 @@ export class AppsyncStack extends Stack {
       }
       
       type Query {
+        getTodo(id: ID!): Todo
+		      @aws_api_key
+	      listTodos(filter: ModelTodoFilterInput, limit: Int, nextToken: String): ModelTodoConnection
+		      @aws_api_key
         advancedSearchGrants(
           includeAllTheseWords: String!,
           includeAnyOfTheseWords: String!,
@@ -566,6 +786,18 @@ export class AppsyncStack extends Stack {
         getResearchers(facultiesToFilterOn: [String], keyword: String): [ResearcherNode]
         getSharedPublications(id1: String!, id2: String!): [PublicationForGraph]
         getSimilarResearchers(researcher_id: String!): [PotentialResearcher]
+      }
+
+      type Subscription {
+        onCreateTodo(filter: ModelSubscriptionTodoFilterInput): Todo
+          @aws_subscribe(mutations: ["createTodo"])
+      @aws_api_key
+        onUpdateTodo(filter: ModelSubscriptionTodoFilterInput): Todo
+          @aws_subscribe(mutations: ["updateTodo"])
+      @aws_api_key
+        onDeleteTodo(filter: ModelSubscriptionTodoFilterInput): Todo
+          @aws_subscribe(mutations: ["deleteTodo"])
+      @aws_api_key
       }
       `
     });

@@ -1,11 +1,11 @@
 {
   "version": 1,
   "serviceConfiguration": {
-    "apiName": "vpriinnovationdashbo",
+    "apiName": "researchinnovationda",
     "serviceName": "AppSync",
     "defaultAuthType": {
       "mode": "AMAZON_COGNITO_USER_POOLS",
-      "cognitoUserPoolId": "authvpriinnovationdashbo197a129c"
+      "cognitoUserPoolId": "authresearchinnovationda197a129c"
     },
     "additionalAuthTypes": [
       {
