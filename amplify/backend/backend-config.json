@@ -79,10 +79,6 @@
     }
   },
   "custom": {
-    "backendEnvParameter": {
-      "providerPlugin": "awscloudformation",
-      "service": "customCDK"
-    },
     "parameterstoreGraphQL": {
       "dependsOn": [
         {

@@ -16,6 +16,7 @@ import { DefinitionBody, IntegrationPattern, JsonPath, StateMachine, TaskInput }
 import { AllowedMethods, CacheHeaderBehavior, CachePolicy, Distribution, OriginRequestPolicy, ResponseHeadersPolicy } from "aws-cdk-lib/aws-cloudfront";
 import { S3Origin } from "aws-cdk-lib/aws-cloudfront-origins";
 import { aws_cloudfront as cloudfront } from 'aws-cdk-lib';
+import * as ssm from 'aws-cdk-lib/aws-ssm';
 
 
 export class GraphDataStack extends Stack {
@@ -263,5 +264,11 @@ export class GraphDataStack extends Stack {
       definitionBody: DefinitionBody.fromChainable(graphStateMachineDefinition),
       stateMachineName: 'expertiseDashboard-graphStepFunction'
     });
+
+    const cloudfrontUrlParam = new ssm.StringParameter(this, 'cloudfrontUrlParam', {
+      parameterName: '/amplify/cloudfront',
+      stringValue: `https://${cloudFrontDistribution.distributionDomainName}/`
+    });
+
   }
 }
