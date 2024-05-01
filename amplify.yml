@@ -5,6 +5,7 @@ backend:
       commands:
         - npm install -g @aws-amplify/cli
         - amplifyPush --simple
+        - echo $REACT_APP_CLOUDFRONT_URL
         - aws ssm put-parameter --name "/amplify/appInfo/appId" --value "$AWS_APP_ID" --type "String" --overwrite
         - cd src
         - user_pool_id=$(grep 'aws_user_pools_id' aws-exports.js | awk -F '"' '{print $4}')
