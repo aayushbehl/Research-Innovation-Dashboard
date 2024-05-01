@@ -15,7 +15,7 @@ export class cdkStack extends cdk.Stack {
     /* AWS CDK code goes here - learn more: https://docs.aws.amazon.com/cdk/latest/guide/home.html */
     
     new ssm.StringParameter(this, 'ParameterBackendName', {
-      parameterName: 'amplify/appInfo/envName',
+      parameterName: '/amplify/appInfo/envName',
       stringValue: cdk.Fn.ref('env')
     })
   }
