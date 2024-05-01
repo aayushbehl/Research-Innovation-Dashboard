@@ -19,7 +19,7 @@ frontend:
     build:
       commands:
         - CLOUDFRONT_URL=$(aws ssm get-parameter --name "/amplify/cloudfront" --with-decryption --query "Parameter.Value" --output text) || CLOUDFRONT_URL=TEST_ERROR
-        - echo $CLOUDFRONT_URL
+        - echo "REACT_APP_CLOUDFRONT_URL=$CLOUDFRONT_URL" >> .env
         - npm run build
 
   artifacts:
