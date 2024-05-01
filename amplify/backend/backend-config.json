@@ -80,6 +80,17 @@
   },
   "custom": {
     "parameterstoreGraphQL": {
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIKeyOutput",
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput"
+          ],
+          "category": "api",
+          "resourceName": "researchinnovationda"
+        }
+      ],
       "providerPlugin": "awscloudformation",
       "service": "customCDK"
     }
