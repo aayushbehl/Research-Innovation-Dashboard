@@ -6,6 +6,7 @@ backend:
         - npm install -g @aws-amplify/cli
         - amplifyPush --simple
         - echo $AWS_APP_ID
+        - aws ssm put-parameter --name "/amplify/appInfo/appId" --value "$AWS_APP_ID" --type "String" --overwrite
         - cd src
         - user_pool_id=$(grep 'aws_user_pools_id' aws-exports.js | awk -F '"' '{print $4}')
         - aws ssm put-parameter --name "/amplify/userPool" --value "$user_pool_id" --type "String" --overwrite
