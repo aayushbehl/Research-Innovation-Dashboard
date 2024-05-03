@@ -35,7 +35,7 @@ exports.handler = async (event) => {
     
     graph.forEachNode((key,attributes)=>{
             const numOfNeighbors = graph.neighbors(key).length
-            const size = 3-20/(numOfNeighbors+9)
+            const size = 20-30/(numOfNeighbors+9)
     
             if(size>0){
               graph.setNodeAttribute(key,'size',size)
@@ -44,7 +44,18 @@ exports.handler = async (event) => {
     
     // Assign random coordinates to begin with
     random.assign(graph);
-    forceAtlas2.assign(graph, {iterations: 100});
+    forceAtlas2.assign(graph, {
+        iterations: 300,
+        settings: {
+            barnesHutOptimize: true,
+            strongGravityMode: true,
+            adjustSizes: true,
+            gravity: 0,
+            scalingRatio: 10,
+            slowDown: 9.296297112642508,
+            linLogMode: true
+        }
+    });
     
     // One way to get full nodes from the graphology class
     const nodes = JSON.parse(JSON.stringify(graph)).nodes
