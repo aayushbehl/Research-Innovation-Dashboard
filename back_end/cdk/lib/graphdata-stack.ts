@@ -17,6 +17,7 @@ import { AllowedMethods, CacheHeaderBehavior, CachePolicy, Distribution, OriginR
 import { S3Origin } from "aws-cdk-lib/aws-cloudfront-origins";
 import { aws_cloudfront as cloudfront } from 'aws-cdk-lib';
 import * as ssm from 'aws-cdk-lib/aws-ssm';
+import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 
 
 export class GraphDataStack extends Stack {
@@ -167,18 +168,29 @@ export class GraphDataStack extends Stack {
     createSimilarResearchersJob.applyRemovalPolicy(RemovalPolicy.DESTROY);
     glueRole.applyRemovalPolicy(RemovalPolicy.DESTROY);
 
-    const createXY = new lambda.Function(this, 'expertiseDashboard-createXYForGraph', {
+    const createXY = new NodejsFunction(this, 'expertiseDashboard-createXYForGraph', {
+      bundling: {
+          nodeModules: [
+            'graphology',
+            'graphology-layout',
+            'graphology-layout-forceatlas2'
+          ],
+          externalModules: [
+          '@aws-sdk/*'
+          ]
+      },
       runtime: lambda.Runtime.NODEJS_18_X,
       functionName: 'expertiseDashboard-createXYForGraph',
-      code: new lambda.AssetCode('lambda/createXYForGraph'),
-      handler: 'createXYForGraph.handler',
+      entry: 'lambda/createXYForGraph/createXYForGraph.js',
+      handler: 'index.handler',
+      depsLockFilePath: 'lambda/createXYForGraph/package-lock.json',
       role: dataFetchRole,
       environment: {
         'GRAPH_BUCKET': graphBucket.bucketName
       },
       timeout: cdk.Duration.minutes(15),
       memorySize: 512
-    });
+    })
 
     // Step function workflow for knowledge graph
 
