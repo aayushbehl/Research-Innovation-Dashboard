@@ -15,33 +15,38 @@ const DepthSelection = ({nodeId}) =>{
     const updateGraph = (nodeId) =>{
       const sigma = GetSigma();
       const graph = sigma.getGraph();
-      const [nodeIDs,firstEdgeIDs,secondEdgeIDs,thirdEdgeIDs] = getNeighborhood(graph, nodeId, selectedDepth);
-      
-      sigma.setSetting("nodeReducer", (node, data) => {
-        return nodeIDs.has(node)
-          ? { ...data,zIndex:1 }
-          : { ...data, label: "",zIndex: 0, hidden:true };
-      });
-      sigma.setSetting("edgeReducer", (edge, data) => {
-        if(firstEdgeIDs.has(edge)){
-          return { ...data, size: data.size, color: "#585858"}
-        }
-        else if(secondEdgeIDs.has(edge)){
-          return { ...data, size: data.size, color: "#8A8A8A"}
-        }
-        else if(thirdEdgeIDs.has(edge)){
-          return { ...data, size: data.size, color: "#BCBCBC"}
-        }
-        else{
-          return { ...data, hidden: true };
-        }
-      });
+      try {
+        const [nodeIDs,firstEdgeIDs,secondEdgeIDs,thirdEdgeIDs] = getNeighborhood(graph, nodeId, selectedDepth);
+        sigma.setSetting("nodeReducer", (node, data) => {
+          return nodeIDs.has(node)
+            ? { ...data,zIndex:1 }
+            : { ...data, label: "",zIndex: 0, hidden:true };
+        });
+        sigma.setSetting("edgeReducer", (edge, data) => {
+          if(firstEdgeIDs.has(edge)){
+            return { ...data, size: data.size, color: "#585858"}
+          }
+          else if(secondEdgeIDs.has(edge)){
+            return { ...data, size: data.size, color: "#8A8A8A"}
+          }
+          else if(thirdEdgeIDs.has(edge)){
+            return { ...data, size: data.size, color: "#BCBCBC"}
+          }
+          else{
+            return { ...data, hidden: true };
+          }
+        });
+      } catch (e) {
+        return;
+      }
     } 
     const getNeighborhood = (graph, centerNode, depth) => {
       let neighborhoodNodes = new Set([centerNode])
       let firstEdges = new Set([])
       let secondEdges = new Set([])
       let thirdEdges = new Set([])
+      if (graph.nodes(centerNode))
+
       graph.forEachNeighbor(centerNode,(firstNeighbor,attributes)=>{
         neighborhoodNodes.add(firstNeighbor)
         firstEdges.add(graph.edge(centerNode,firstNeighbor))
