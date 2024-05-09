@@ -450,17 +450,7 @@ export default function Researcher_profile_overview() {
   }
 
   function showGraphFunc() {
-    setShowOverview(false);
-    setShowAreasOfInterest(false);
-    setShowPublications(false);
-    setShowSimilarResearchers(false);
-    setShowGrants(false);
-    setShowPatents(false);
-    setShowFullGraph(false);
-    setShowResearchersWithSimilarKeyword(false);
-    setShowGraph(true);
-    setShowGraphPopup(false);
-    setNavButtonSelected("Collaborators");
+    setShowGraphPopup(true);
   }
 
   function showGraphPopupFunc() {
@@ -655,6 +645,7 @@ export default function Researcher_profile_overview() {
                 <Paper square={true} elevation={0} variant="outlined">
                     <GraphInformation
                     scopusId={scopusId}
+                    onClickFunction={showGraphPopupFunc}
                     />
                 </Paper>
               </Grid>
