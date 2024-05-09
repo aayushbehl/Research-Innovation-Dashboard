@@ -85,7 +85,7 @@ const ResearcherGraph = (props) => {
           const graph = Graph.from(jsonGraph)
           graph.forEachNode((key,attributes)=>{
             const numOfNeighbors = graph.neighbors(key).length
-            const size = 4-30/(numOfNeighbors+20)
+            const size = 3-20/(numOfNeighbors+9)
             
             if(size>0){
               graph.setNodeAttribute(key,'size',size)

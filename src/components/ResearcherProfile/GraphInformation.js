@@ -18,16 +18,14 @@ export default function GraphInformation(props){
             <Typography>View a graph of this researcher's connections</Typography>
           </Box>
           <Box textAlign="center" sx={{ ml: "2%", mr: "2%", mb:"2%"}}>
-            <a href={`/Collaborators/${props.scopusId}`} target="_blank" rel="noopener noreferrer">
-                <Button sx={{
-                  m: 1,
-                  border: "2px solid Black",
-                  color: "black",
-                  backgroundColor: "white",
-                }}>
-                    View Collaborators
-                </Button>
-            </a>
+              <Button onClick={props.onClickFunction} sx={{
+                m: 1,
+                border: "2px solid Black",
+                color: "black",
+                backgroundColor: "white",
+              }}>
+                View Collaborators
+              </Button>
           </Box>
         </Box>
       );

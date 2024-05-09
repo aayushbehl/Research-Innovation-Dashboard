@@ -23,7 +23,7 @@ Auth.configure(awsmobile);
 
 
 export default function TheApp(props) {
-  const { scopusId } = useParams();
+  const { scopusId } = useParams() ;
 
   const [researcherNodes, setResearcherNodes] = useState(null);
   const [graphEdges, setGraphEdges] = useState(null);
@@ -120,7 +120,11 @@ export default function TheApp(props) {
     setSelectedEdge(null);
     setGraphProgress(10)
     getGraph();
-    setSelectedNode(scopusId);
+    // If scopusId sent as props, it takes priority 
+    if(props.scopusId)
+      setSelectedNode(props.scopusId)
+    else
+      setSelectedNode(scopusId);
   }
 
   function startTutorial() {

@@ -10,6 +10,7 @@ import IntellectualProperty from "./IntellectualPropertyActivity";
 import ResearcherInfo from "./ResearcherInfo";
 import ResearcherHighlights from "./ResearchHighlights";
 import ResearchProfileNavigation from "./ResearcherProfileNavigation";
+import CollaborationPopup from "./CollaborationGraphPopup";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import SimilarResearchers from "./SimilarResearchers";
@@ -63,6 +64,7 @@ export default function Researcher_profile_overview() {
   const [showPublications, setShowPublications] = useState(false);
   const [showSimilarResearchers, setShowSimilarResearchers] = useState(false);
   const [showGraph, setShowGraph] = useState(false);
+  const [showGraphPopup, setShowGraphPopup] = useState(false);
   const [similarResearchersArray, setSimilarResearchersArray] = useState([]);
   const [lastUpdatedAt, setLastUpdatedAt] = useState(0)
   const [rank, setRank] = useState("")
@@ -349,6 +351,7 @@ export default function Researcher_profile_overview() {
     setShowFullGraph(false);
     setShowResearchersWithSimilarKeyword(false);
     setShowGraph(false);
+    setShowGraphPopup(false);
     setNavButtonSelected("Overview");
   }
 
@@ -364,6 +367,7 @@ export default function Researcher_profile_overview() {
     setShowFullGraph(false);
     setShowResearchersWithSimilarKeyword(false);
     setShowGraph(false);
+    setShowGraphPopup(false);
     setNavButtonSelected("Areas of Interest");
   }
 
@@ -377,6 +381,7 @@ export default function Researcher_profile_overview() {
     setShowFullGraph(false);
     setShowResearchersWithSimilarKeyword(false);
     setShowGraph(false);
+    setShowGraphPopup(false);
     setNavButtonSelected("Publications");
   }
 
@@ -391,6 +396,7 @@ export default function Researcher_profile_overview() {
     setincreasePublicationListBy(5);
     setShowFullGraph(false);
     setShowResearchersWithSimilarKeyword(false);
+    setShowGraphPopup(false);
     setShowGraph(false);
   }
 
@@ -406,6 +412,7 @@ export default function Researcher_profile_overview() {
     setShowFullGraph(false);
     setShowResearchersWithSimilarKeyword(false);
     setShowGraph(false);
+    setShowGraphPopup(false);
     setNavButtonSelected("Grants");
   }
 
@@ -421,6 +428,7 @@ export default function Researcher_profile_overview() {
     setShowFullGraph(false);
     setShowResearchersWithSimilarKeyword(false);
     setShowGraph(false);
+    setShowGraphPopup(false);
     setNavButtonSelected("Patents");
   }
 
@@ -438,6 +446,7 @@ export default function Researcher_profile_overview() {
     setKeywordToSearchFor(keyWord);
     getSimilarResearcherBasedOnKeyword(keyWord);
     setShowGraph(false);
+    setShowGraphPopup(false);
   }
 
   function showGraphFunc() {
@@ -450,7 +459,16 @@ export default function Researcher_profile_overview() {
     setShowFullGraph(false);
     setShowResearchersWithSimilarKeyword(false);
     setShowGraph(true);
+    setShowGraphPopup(false);
     setNavButtonSelected("Collaborators");
+  }
+
+  function showGraphPopupFunc() {
+    setShowGraphPopup(true);
+  }
+
+  const graphPopupClose = () => {
+    setShowGraphPopup(false);
   }
 
   const getSimilarResearcherBasedOnKeyword = async (keyWord) => {
@@ -717,9 +735,13 @@ export default function Researcher_profile_overview() {
               <Paper square={true} elevation={0} variant="outlined">
                   <GraphInformation
                   scopusId={scopusId}
+                  onClickFunction={showGraphPopupFunc}
                   />
               </Paper>
             </Grid>
+          )}
+          {showGraphPopup && (
+            <CollaborationPopup handleClose={graphPopupClose} scopusId={scopusId}></CollaborationPopup>
           )}
         </Grid>
       )}
