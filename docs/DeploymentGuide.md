@@ -326,10 +326,10 @@ Please delete the stacks in the opposite order of when you deployed them.
    ![alt text](images/p3/deployment/depl-statemachines.png)
 
 3. Search for a state machine named `expertiseDashboard-graphStepFunction` and select it.
-   ![alt text](images/deploymentGuide/depl-graphstepfunctions.png)
+   ![alt text](images/p3/deployment/depl-graphstepfunctions.png)
 
 4. Run this job Start Execution > Start Execution. This will take about 30 minutes.
-   ![alt text](images/deploymentGuide/depl-startexec.png) 
+   ![alt text](images/p3/deployment/depl-startexec.png) 
 
 ## Step 9: Creating a User
 
