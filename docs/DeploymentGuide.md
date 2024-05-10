@@ -138,7 +138,13 @@ Initialize the CDK stacks (required only if you have not deployed this stack bef
 
 ```bash
 cdk synth --profile your-profile-name
-cdk bootstrap aws://YOUR_AWS_ACCOUNT_ID/YOUR_ACCOUNT_REGION --profile your-profile-name
+cdk bootstrap aws://YOUR_AWS_ACCOUNT_ID/YOUR_ACCOUNT_REGION aws://YOUR_AWS_ACCOUNT_ID/us-east-1 --profile your-profile-name
+```
+
+**Note**: The cdk bootstrap command needs to add both the main account region and the region us-east-1. If your main deployment region is us-east-1, use this command instead.
+
+```bash
+cdk bootstrap aws://YOUR_AWS_ACCOUNT_ID/us-east-1 --profile your-profile-name
 ```
 
 Deploy the CDK stacks (this will take ~ 60 minutes):
@@ -215,6 +221,10 @@ cdk deploy UpdatePublicationStack --profile your-profile-name
 
 ```
 cdk deploy GraphDataStack --profile your-profile-name
+```
+
+```
+cdk deploy CloudfrontAuthStack --profile your-profile-name
 ```
 
 ### Taking down the deployed stacks
@@ -309,19 +319,17 @@ Please delete the stacks in the opposite order of when you deployed them.
 
 **NOTE: Only start this step when the StateMachine from [step 5](#step-5-run-the-data-pipeline) finished executing.**
 
-1. On AWS Console, search and navigate to AWS Glue
-   ![alt text](images/p3/deployment/depl-glue.png)
+1. On AWS Console, search and navigate to Step Functions
+   ![alt text](images/p3/deployment/depl-stepfunctions.png)
 
-2. Navigate to ETL jobs > Visual ETL
-   ![alt text](images/p3/deployment/depl-glue-job.png)
+2. Navigate to State machines
+   ![alt text](images/p3/deployment/depl-statemachines.png)
 
-3. Search for a Glue job that contains the string `createEdges`.
-   ![alt text](images/deploymentGuide/deploy-glue-job-createEdges.png)
+3. Search for a state machine named `expertiseDashboard-graphStepFunction` and select it.
+   ![alt text](images/deploymentGuide/depl-graphstepfunctions.png)
 
-4. Tick the box next to it and click `Run job`.
-   ![alt text](images/deploymentGuide/deploy-glue-job-run-createEdges.png)
-
-5. No further action is needed. This will execute the entire pipeline. This process will take ~18 hours. 
+4. Run this job Start Execution > Start Execution. This will take about 30 minutes.
+   ![alt text](images/deploymentGuide/depl-startexec.png) 
 
 ## Step 9: Creating a User
 
