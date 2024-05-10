@@ -9,6 +9,7 @@ backend:
         - user_pool_id=$(grep 'aws_user_pools_id' aws-exports.js | awk -F '"' '{print $4}')
         - aws ssm put-parameter --name "/amplify/userPool" --value "$user_pool_id" --type "String" --overwrite
         - aws ssm put-parameter --name "/amplify/appId" --value "$AWS_APP_ID" --type "String" --overwrite
+        - aws ssm put-parameter --name "/amplify/branchName" --value "$AWS_BRANCH" --type "String" --overwrite
 
 frontend:
   phases:
