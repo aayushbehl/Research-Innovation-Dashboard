@@ -329,7 +329,9 @@ Please delete the stacks in the opposite order of when you deployed them.
    ![alt text](images/p3/deployment/depl-graphstepfunctions.png)
 
 4. Run this job Start Execution > Start Execution. This will take about 30 minutes.
-   ![alt text](images/p3/deployment/depl-startexec.png) 
+   ![alt text](images/p3/deployment/depl-startexec.png)
+
+**Note:** The state machine workflow involves triggering a redeploy on the Amplify app, but doesn't wait for the redeploy to finish. It might take approximately 10 minutes after the state machine has executed for the redeploy to finish and the graph to start working. 
 
 ## Step 9: Creating a User
 

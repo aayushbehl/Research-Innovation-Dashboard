@@ -190,7 +190,17 @@ export class GraphDataStack extends Stack {
       },
       timeout: cdk.Duration.minutes(15),
       memorySize: 512
-    })
+    });
+
+    const redeployAmplify = new lambda.Function(this, 'expertiseDashboard-redeployAmplify', {
+      runtime: lambda.Runtime.PYTHON_3_10,
+      functionName: 'expertiseDashboard-redeployAmplify',
+      handler: 'redeployAmplify.lambda_handler',
+      code: lambda.Code.fromAsset('lambda/redeployAmplify'),
+      memorySize: 512,
+      timeout: cdk.Duration.seconds(300),
+      role: dataFetchRole
+    });
 
     // Step function workflow for knowledge graph
 
@@ -216,6 +226,44 @@ export class GraphDataStack extends Stack {
       glueJobName: createSimilarResearchersJobName,
       integrationPattern: IntegrationPattern.RUN_JOB
     });
+
+    const getParametersStep = new tasks.CallAwsService(this, 'getParametersStep', {
+      service: 'ssm',
+      action: 'getParameters',
+      iamResources: ['*'],
+      iamAction: 'ssm:*',
+      parameters: {
+        "Names": [
+          '/amplify/branchName',
+          '/amplify/appId'
+        ]
+      }
+    });
+
+    const createWebhookStep = new tasks.CallAwsService(this, 'createWebhookStep', {
+      service: 'amplify',
+      action: 'createWebhook',
+      iamResources: ['*'],
+      iamAction: 'amplify:*',
+      parameters: {
+        "AppId": JsonPath.stringAt('$.Parameters[0].Value'),
+        "BranchName": JsonPath.stringAt('$.Parameters[1].Value') 
+      }
+    });
+
+    const redeployAmplifyStep = new tasks.LambdaInvoke(this, 'redeployAmplifyStep', {
+      lambdaFunction: redeployAmplify
+    });
+
+    const deleteWebhookStep = new tasks.CallAwsService(this, 'deleteWebhookStep', {
+      service: 'amplify',
+      action: 'deleteWebhook',
+      iamResources: ['*'],
+      iamAction: 'amplify:*',
+      parameters: {
+        "WebhookId": JsonPath.stringAt('$.id') 
+      }
+    })
 
     // Cloudfront
     const cloudFrontDistribution = new Distribution(this, 'cloudfrontGraph', {
@@ -270,7 +318,11 @@ export class GraphDataStack extends Stack {
             .next(createSimilarResearchersStep)
             .next(fetchNodesStep)
             .next(createXYStep)
-            .next(invalidationStep);
+            .next(invalidationStep)
+            .next(getParametersStep)
+            .next(createWebhookStep)
+            .next(redeployAmplifyStep)
+            .next(deleteWebhookStep);
 
     const graphStateMachine = new StateMachine(this, 'graphStateMachine', {
       definitionBody: DefinitionBody.fromChainable(graphStateMachineDefinition),
