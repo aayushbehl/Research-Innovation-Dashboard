@@ -50,13 +50,13 @@ Architecture Diagram exported as XML file from draw.io can be found [here](Exper
 5.   This step will start a data Replication Task on AWS Data Migration Service (DMS) to replicate the new patent data into AWS Opensearch Service. After this process is done, the data will be searchable on the front-end web app.
 
 #### Steps 30-33 are explored in more detail as part of the [Knowledge Graph Pipeline Deep Dive](/docs/KnowledgeGraphDataPipelineDeepDive.md)
-30. When queries are made for data related to the knowledge graph, Lambda connects to the RDS PostgreSQL database and gets the data requested by AppSync.
+30. The graph state machine does a number of tasks (see [here](/docs/KnowledgeGraphDataPipelineDeepDive.md#4-state-machine-workflow)). The first job transforms existing researcher and publication data from the PostgreSQL database. It then uses the transformed data to populate the edges_full table in the database, which defines how researchers will be connected to each other in the graph. The second job transforms existing researcher data from the PostgreSQL database. It then uses the transformed data to populate the potential_edges table in the database, which defines researchers who are similar to eachother based on shared keywords.
 
-31. AWS AppSync triggers the PostgreSQL Lambda resolver and passes the correct variables needed to get the required data.
+31. Two Lambda functions in the state machine are responsible for extracting all the nodes and edges into memory and storing the graph in an S3 bucket in the form of json files.
 
-32. This step transforms existing researcher and publication data from the PostgreSQL database. It then uses the transformed data to populate the edges_full table in the database, which defines how researchers will be connected to eachother in the graph. 
+32. The S3 bucket sources a cloudfront distribution that provides fast access to the graph json files around the world. 
 
-33. This step transforms existing researcher data from the PostgreSQL database. It then uses the transformed data to populate the potential_edges table in the database, which defines researchers who are similar to eachother based on shared keywords.
+33. The step functions workflow also redeploys the Amplify app so that it is restarted with the Cloudfront distribution's URL as one of the environment variables.
 
 ### Front End Flow (26-29)
 ![Architecture diagram](../docs/images/architecture-diagram-front-end.png)
