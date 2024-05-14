@@ -193,7 +193,7 @@ export class GraphDataStack extends Stack {
     });
 
     const redeployAmplify = new lambda.Function(this, 'expertiseDashboard-redeployAmplify', {
-      runtime: lambda.Runtime.PYTHON_3_10,
+      runtime: lambda.Runtime.NODEJS_18_X,
       functionName: 'expertiseDashboard-redeployAmplify',
       handler: 'redeployAmplify.lambda_handler',
       code: lambda.Code.fromAsset('lambda/redeployAmplify'),
@@ -261,7 +261,7 @@ export class GraphDataStack extends Stack {
       iamResources: ['*'],
       iamAction: 'amplify:*',
       parameters: {
-        "WebhookId": JsonPath.stringAt('$.id') 
+        "WebhookId": JsonPath.stringAt('$.Payload.id') 
       }
     })
 
