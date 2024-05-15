@@ -44,6 +44,10 @@ Creating the cache files and making them accessible to the Amplify deployment is
 
 ![alt text](images/p3/deepdive/stepfunctions_graph.png)
 
+The following is a brief description of each step in the state machine:
+
+1. 
+
 Running the state machine automatically runs the two glue jobs associated with creating the tables associated with the graph in the database. Then, depending on the structure of the graph, a display layout is determined. This is done by using the [graphology-layout-forceatlas2](https://www.npmjs.com/package/graphology-layout-forceatlas2) alogorithm which gives each node an x and a y coordinate postion. The node data (with the positions) and the edge data is then stored in the S3 bucket.
 
 The state machine also needs to redeploy Amplify. The Amplify runtime needs the Cloudfront URL to send requests to. However, since the backend (and hence the cloudfront distribution) is deployed after the first Amplify deployment, this is not possible. Redeploying Amplify as part of this state machine ensures that Amplify gets access to the Cloudfront URL as an environment variable. Amplify Webhooks are used for this purpose.

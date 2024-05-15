@@ -29,11 +29,12 @@ const postRequest = (url) => new Promise((resolve, reject) => {
 });
 
 exports.handler = async (event) => {
-    const webhookUrl = event['Webhook']['WebhookUrl'];
-    const webhookId = event['Webhook']['WebhookId'];
+    const webhookUrl = event['result']['Webhook']['WebhookUrl'];
+    const webhookId = event['result']['Webhook']['WebhookId'];
     const result = await postRequest(webhookUrl);
     return {
         id: webhookId,
+        appId: event['Parameters'][0]['Value'],
         statusCode: result
     }
 };

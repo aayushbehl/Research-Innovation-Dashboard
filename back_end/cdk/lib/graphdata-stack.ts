@@ -12,7 +12,7 @@ import { GrantDataStack } from "./grantdata-stack";
 import { aws_stepfunctions_tasks as tasks} from 'aws-cdk-lib';
 import { AppsyncStack } from "./appsync-stack";
 import { CloudfrontAuthStack } from '../lib/cloudfrontauth-stack';
-import { DefinitionBody, IntegrationPattern, JsonPath, StateMachine, TaskInput } from "aws-cdk-lib/aws-stepfunctions";
+import { Choice, Condition, DefinitionBody, IntegrationPattern, JsonPath, Pass, StateMachine, TaskInput, Wait, WaitTime } from "aws-cdk-lib/aws-stepfunctions";
 import { AllowedMethods, CacheHeaderBehavior, CachePolicy, Distribution, OriginRequestPolicy, ResponseHeadersPolicy } from "aws-cdk-lib/aws-cloudfront";
 import { S3Origin } from "aws-cdk-lib/aws-cloudfront-origins";
 import { aws_cloudfront as cloudfront } from 'aws-cdk-lib';
@@ -248,11 +248,22 @@ export class GraphDataStack extends Stack {
       parameters: {
         "AppId": JsonPath.stringAt('$.Parameters[0].Value'),
         "BranchName": JsonPath.stringAt('$.Parameters[1].Value') 
-      }
+      },
+      resultPath: "$.result"
     });
 
     const redeployAmplifyStep = new tasks.LambdaInvoke(this, 'redeployAmplifyStep', {
       lambdaFunction: redeployAmplify
+    });
+
+    const getAppStep = new tasks.CallAwsService(this, 'getAppStep', {
+      service: 'amplify',
+      action: 'getApp',
+      iamResources: ['*'],
+      iamAction: 'amplify:*',
+      parameters: {
+        "AppId": JsonPath.stringAt("$.Payload.appId")
+      }
     });
 
     const deleteWebhookStep = new tasks.CallAwsService(this, 'deleteWebhookStep', {
@@ -314,6 +325,20 @@ export class GraphDataStack extends Stack {
       }
     });
 
+    const choice = new Choice(this, 'amplifyStatus');
+    const condition = Condition.stringEquals('$.App.ProductionBranch.Status', 'RUNNING');
+    const statusLoop = choice.when(condition, deleteWebhookStep).otherwise(
+      new Wait(this, 'waitState', {
+        time: WaitTime.duration(cdk.Duration.seconds(3))
+      }).next(new Pass(this, 'transformResult', {
+        parameters: {
+          "Payload": {
+            "appId.$": "$.App.AppId"
+          }
+        }
+      })).next(getAppStep)
+    );
+
     const graphStateMachineDefinition = createEdgesStep
             .next(createSimilarResearchersStep)
             .next(fetchNodesStep)
@@ -322,7 +347,8 @@ export class GraphDataStack extends Stack {
             .next(getParametersStep)
             .next(createWebhookStep)
             .next(redeployAmplifyStep)
-            .next(deleteWebhookStep);
+            .next(getAppStep)
+            .next(statusLoop);
 
     const graphStateMachine = new StateMachine(this, 'graphStateMachine', {
       definitionBody: DefinitionBody.fromChainable(graphStateMachineDefinition),
