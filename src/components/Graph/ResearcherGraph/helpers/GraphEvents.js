@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSigma, useRegisterEvents } from "@react-sigma/core";
+import { click } from "@testing-library/user-event/dist/click";
 
 const NODE_FADE_COLOR = "#bbb";
 const EDGE_FADE_COLOR = "#eee";
@@ -27,7 +28,6 @@ const GraphEvents = ({firstClickedNode,setFirstClickedNode, selectedEdge, setSel
       setEdgeSelectionMode(true);
       setSecondClickedNode(null);
       highlightAdjacentNodes(firstClickedNode,"click");
-
     }else{
       setEdgeSelectionMode(null);
       setSecondClickedNode(null);
@@ -90,10 +90,11 @@ const GraphEvents = ({firstClickedNode,setFirstClickedNode, selectedEdge, setSel
       else {
         if(graph.areNeighbors(clickedNode, firstClickedNode)){ //can be a second selection node
           setSecondClickedNode(clickedNode);
-      
         } else { //cancel selection mode (clicked on node that is not a adjacent node)
-          setFirstClickedNode(null);
-
+          setEdgeSelectionMode(true);
+          setSecondClickedNode(null);
+          setSelectedEdge(null);
+          setFirstClickedNode(clickedNode);
         }
       }
     } 
