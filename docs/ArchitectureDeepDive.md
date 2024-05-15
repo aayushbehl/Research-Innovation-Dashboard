@@ -59,7 +59,7 @@ Architecture Diagram exported as XML file from draw.io can be found [here](Exper
 33. The step functions workflow also redeploys the Amplify app so that it is restarted with the Cloudfront distribution's URL as one of the environment variables.
 
 ### Front End Flow (26-29)
-![Architecture diagram](../docs/images/architecture-diagram-front-end.png)
+![Architecture diagram](../docs/images/ExpertiseDashboard_Architecture_Phase_III-FrontendFlow.drawio.png)
 
 26. All queries approved by AWS Web Application Firewall (WAF) are passed to AppSync.
 27. All queries are first sent to AWS WAF. This helps prevent malicious users from getting data or breaking the website with DDOS attacks.
