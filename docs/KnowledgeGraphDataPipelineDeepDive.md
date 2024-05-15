@@ -70,7 +70,9 @@ The following is a brief description of each step in the state machine:
 
 12. **transformResult**: An intermediate state responsible for transforming the input data into the right format for processing by the getAppStep.
 
-13. **deleteWebhookStep**: Delete the created webhook.
+13. **listWebhooksStep**: Fetches the list of Webhooks on the Amplify app. Ideally, there will only be one webhook, which will get deleted in the next step.
+
+14. **deleteWebhookStep**: Delete the created webhook.
 
 Running the state machine automatically runs the two glue jobs associated with creating the tables associated with the graph in the database. Then, depending on the structure of the graph, a display layout is determined. This is done by using the [graphology-layout-forceatlas2](https://www.npmjs.com/package/graphology-layout-forceatlas2) alogorithm which gives each node an x and a y coordinate postion. The node data (with the positions) and the edge data is then stored in the S3 bucket.
 
