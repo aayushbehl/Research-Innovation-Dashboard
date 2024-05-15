@@ -96,15 +96,16 @@ const FacultyFiltersDialog = ({
               <Typography style={{paddingBottom:'1em'}} variant="h6">Filter by Keywords</Typography>
               <TextField label="Keywords" helperText="Example: genetics, ai" size="small" value={keywordFilter} onChange={(event) => {setKeywordFilter(event.target.value)}}/>
             </Box>
+            <Button variant="outlined" sx={{ color: "#ffffff",
+             backgroundColor: "#012144",
+             "&:hover": {
+              boxShadow: "0px 3px 10px -6px black",
+              backgroundColor: "#012144" 
+             }  }} onClick={() => {applyFilters();}}>
+              Apply Filters
+            </Button>
           </Grid>
         </Grid>
-        <Button
-          variant="outlined"
-          sx={{ color: "#0055b7" }}
-          onClick={() => {applyFilters();}}
-        >
-          Apply Filters
-        </Button>
       </Box>
     </Dialog>
   );
