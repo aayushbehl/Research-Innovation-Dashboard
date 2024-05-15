@@ -263,8 +263,19 @@ export class GraphDataStack extends Stack {
       iamAction: 'amplify:*',
       parameters: {
         "AppId": JsonPath.stringAt("$.Payload.appId")
-      }
+      },
+      resultPath: "$.result"
     });
+
+    const listWebhooksStep = new tasks.CallAwsService(this, 'listWebhooksStep', {
+      service: 'amplify',
+      action: 'listWebhooks',
+      iamResources: ['*'],
+      iamAction: 'amplify:*',
+      parameters: {
+        "AppId": JsonPath.stringAt('$.Payload.appId') 
+      }
+    })
 
     const deleteWebhookStep = new tasks.CallAwsService(this, 'deleteWebhookStep', {
       service: 'amplify',
@@ -272,7 +283,7 @@ export class GraphDataStack extends Stack {
       iamResources: ['*'],
       iamAction: 'amplify:*',
       parameters: {
-        "WebhookId": JsonPath.stringAt('$.Payload.id') 
+        "WebhookId": JsonPath.stringAt('$.Webhooks[0].WebhookId') 
       }
     })
 
@@ -326,14 +337,14 @@ export class GraphDataStack extends Stack {
     });
 
     const choice = new Choice(this, 'amplifyStatus');
-    const condition = Condition.stringEquals('$.App.ProductionBranch.Status', 'RUNNING');
-    const statusLoop = choice.when(condition, deleteWebhookStep).otherwise(
+    const condition = Condition.stringEquals('$.result.App.ProductionBranch.Status', 'RUNNING');
+    const statusLoop = choice.when(condition, listWebhooksStep.next(deleteWebhookStep)).otherwise(
       new Wait(this, 'waitState', {
         time: WaitTime.duration(cdk.Duration.seconds(3))
       }).next(new Pass(this, 'transformResult', {
         parameters: {
           "Payload": {
-            "appId.$": "$.App.AppId"
+            "appId.$": "$.result.App.AppId",
           }
         }
       })).next(getAppStep)
