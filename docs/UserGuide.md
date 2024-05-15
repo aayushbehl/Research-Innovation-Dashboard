@@ -336,6 +336,20 @@ Below that, flagged researcher entries are grouped into tables with the columns 
 5. The data pipeline will now run on its own and populate the database. This process will take ~5 hours. If you navigate to the page you visited in part 2 of this step you can view the status of the data pipeline. Once it is finished running the step function execution status will say `Succeeded`.
    ![alt text](images/deploymentGuide/state_machine_success.jpg)
 
+### Step 3: Run the Knowledge Graph State Machine
+
+1. On AWS Console, search and navigate to Step Functions
+   ![alt text](images/p3/deployment/depl-stepfunctions.png)
+
+2. Navigate to State machines
+   ![alt text](images/p3/deployment/depl-statemachines.png)
+
+3. Search for a state machine named `expertiseDashboard-graphStepFunction` and select it.
+   ![alt text](images/p3/deployment/depl-graphstepfunctions.png)
+
+4. Run this job Start Execution > Start Execution. This will take about 30 minutes.
+   ![alt text](images/p3/deployment/depl-startexec.png)
+
 ## Updating Grant Data
 
 **NOTE**: grant data should be updated every 6 months or so.
